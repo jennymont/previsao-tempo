@@ -12,14 +12,16 @@
         v-on:input="filtro = $event.target.value"
         placeholder="Filtre pela cidade"
       />
-      {{ filtro }}
-      <button>Buscar</button>
+      <button @click="buscar()">Buscar</button>
+      {{this.cidade}}
     </li>
+
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import api from "@/service/api.js";
+
 export default {
   name: "App",
   components: {},
@@ -27,19 +29,33 @@ export default {
   data() {
     return {
       filtro: "",
+      tempo: {},
+      cidade: {}
+
     };
   },
 
-  created() {
-    axios
-      .get("https://api.github.com/users/luizmedeiros00") //alterar api 
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  methods: {
+    buscar() {
+      api
+        .get(`${this.filtro}`)
+        .then((resposta) => {
+          console.log("DEU CERTO");
+          this.tempo = resposta.data
+
+          this.cidade = {
+            nome: this.tempo.location.name,
+            regiao: this.tempo.location.region,
+            pais:   this.tempo.location.country,
+            temperatura: this.tempo.current.temperature,
+          }
+          console.log(this.cidade);
+        })                                        
+        .catch((erro) => console.log(`DEU ERRO: ${erro}`));
+    },
   },
+
+  created() {},
 };
 </script>t
 
